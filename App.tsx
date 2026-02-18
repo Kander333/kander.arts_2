@@ -17,6 +17,11 @@ function App() {
   // Derived state
   const currentLocation = useMemo(() => LOCATIONS[currentLocationId], [currentLocationId]);
   
+  // Get all possible transition URLs from current location for preloading
+  const availableTransitions = useMemo(() => {
+    return currentLocation.exits.map(exit => exit.transitionVideo);
+  }, [currentLocation]);
+
   // Calculate which image should be "behind" the video
   const activeImageSrc = useMemo(() => {
     if (engineState === EngineState.TRANSITION && pendingTargetId) {
@@ -49,6 +54,7 @@ function App() {
       <VideoEngine 
         imageSrc={activeImageSrc}
         transitionSrc={transitionVideoSrc}
+        preloadSrcs={availableTransitions}
         engineState={engineState}
         onTransitionEnd={handleTransitionComplete}
         muted={muted}
